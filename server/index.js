@@ -39,15 +39,13 @@ const path = require('path');
 // });
 
 const io = new Server(server, {
- pingTimeout : 60000,
+  pingTimeout: 60000,
   cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
+    origin: "https://collab-code-opal.vercel.app",  // 
+    methods: ["GET", "POST"],
     credentials: true,
   },
-  // Allow older versions of Socket.IO clients to connect
 });
-
 
 app.use(cors());
 
