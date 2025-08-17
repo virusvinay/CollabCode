@@ -1,5 +1,5 @@
 <div style="max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif; line-height: 1.6;">
-  <h1 style="text-align: center; color: #333;">CodeCollabify</h1>
+  <h1 style="text-align: center; color: #333;">CollabCode</h1>
   
   <p style="color: #555; font-size: 18px;">
     <strong>CodeCollabify</strong> is a real-time collaborative coding platform designed to enhance team-based coding experiences. With a powerful Monaco code editor, live output display, and an integrated chat system, it provides a seamless environment for coding and communication. The platform is built using the MERN stack and styled with Tailwind CSS, ensuring a modern and responsive design.
