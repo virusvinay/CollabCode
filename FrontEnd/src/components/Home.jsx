@@ -1,111 +1,9 @@
-// import React, { useState } from "react";
-// import { v4 as uuid } from "uuid";
-// import toast from "react-hot-toast";
-// import { useNavigate } from "react-router-dom";
-// import AccordianBar from "./AccordianBar";
-// function Home() {
-//   const [roomId, setRoomId] = useState("");
-//   const [username, setUsername] = useState("");
-
-//   const navigate = useNavigate();
-
-//   const generateRoomId = (e) => {
-//     e.preventDefault();
-//     const Id = uuid();
-//     setRoomId(Id);
-//     toast.success("Room Id is generated");
-//   };
-
-//   const joinRoom = () => {
-//     if (!roomId || !username) {
-//       toast.error("Both the field is requried");
-//       return;
-//     }
-
-//     // redirect
-//     navigate(`/editor/${roomId}`, {
-//       state: {
-//         username,
-//       },
-//     });
-//     toast.success("room is created");
-//   };
-
-//   // when enter then also join
-//   const handleInputEnter = (e) => {
-//     if (e.code === "Enter") {
-//       joinRoom();
-//     }
-//   };
-
-//   return (
-//     <div className="container-fluid" >
-//       <div className="row justify-content-center align-items-center min-vh-100">
-//         <div className="col-12 col-md-6">
-//           <div className="card shadow-sm p-2 mb-5 bg-secondary rounded">
-//             <div className="card-body text-center ">
-//               <img
-//                 src="/codeCollabLogo.png"
-//                 alt="Logo"
-//                 className="img-fluid mx-auto d-block"
-//                 style={{ maxWidth: "200px" }}
-//               />
-//               <h4 className="card-title text-light mb-4">Enter the ROOM ID</h4>
-
-//               <div className="form-group">
-//                 <input
-//                   type="text"
-//                   value={roomId}
-//                   onChange={(e) => setRoomId(e.target.value)}
-//                   className="form-control mb-2"
-//                   placeholder="ROOM ID"
-//                   onKeyUp={handleInputEnter}
-//                 />
-//               </div>
-//               <div className="form-group">
-//                 <input
-//                   type="text"
-//                   value={username}
-//                   onChange={(e) => setUsername(e.target.value)}
-//                   className="form-control mb-2"
-//                   placeholder="USERNAME"
-//                   onKeyUp={handleInputEnter}
-//                 />
-//               </div>
-//               <button
-//                 onClick={joinRoom}
-//                 className=" text-#0e161b btn btn-success btn-lg btn-block"
-//               >
-//                 JOIN
-//               </button>
-//               <p className="mt-3 text-light">
-//                 Don't have a room ID? Click
-//                 <span
-//                   onClick={generateRoomId}
-//                   className=" text-info p-2 font-weight-bold"
-//                   style={{ cursor: "pointer" }}
-//                 >
-                  
-//                   New Room
-//                 </span>
-//               </p>
-//             </div>
-//           </div>
-//         </div>
-
-//         <AccordianBar></AccordianBar>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Home;
-
 import React, { useState } from "react";
 import { v4 as uuid } from "uuid";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import AccordianBar from "./AccordianBar";
+import Navbar from "../components/Navbar";
 
 function Home() {
   const [roomId, setRoomId] = useState("");
@@ -117,7 +15,7 @@ function Home() {
     e.preventDefault();
     const Id = uuid();
     setRoomId(Id);
-    toast.success("Room ID is generated");
+    toast.success("Room ID generated");
   };
 
   const joinRoom = () => {
@@ -126,75 +24,74 @@ function Home() {
       return;
     }
 
-    // redirect
     navigate(`/editor/${roomId}`, {
-      state: {
-        username,
-      },
+      state: { username },
     });
-    toast.success("Room is joined");
+    toast.success("Joined room");
   };
 
-  // when enter then also join
   const handleInputEnter = (e) => {
-    if (e.code === "Enter") {
-      joinRoom();
-    }
+    if (e.code === "Enter") joinRoom();
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row items-center justify-center bg-gray-900 p-4 sm:p-6 lg:p-8">
-      <div className="w-full max-w-md bg-gray-800 shadow-lg rounded-lg p-6 sm:p-8 mb-8 lg:mb-0 lg:mr-8">
-        <div className="text-center">
-          <img
-            src="/codeCollabLogo.png"
-            alt="Logo"
-            className="mx-auto mb-4   sm:max-w-[150px] md:max-w-[200px] lg:max-w-[300px]"
-            
-          />
-          <h4 className="text-xl sm:text-2xl font-semibold text-gray-100 mb-4">
-            Enter the ROOM ID
-          </h4>
+    <div className="min-h-screen bg-gray-900 text-gray-100">
+      
+      <div className="max-w-6xl mx-auto p-6 lg:p-12 flex flex-col lg:flex-row gap-8">
+        {/* Left card - Join / Create */}
+        <div className="flex-1 bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-700">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-blue-400 to-teal-300 bg-clip-text text-transparent">
+              CollabCode
+            </h1>
+            <p className="text-gray-400 mt-2">Realtime Collaboration Editor</p>
+          </div>
 
-          <div className="mb-4">
+          <div className="space-y-4">
+            <label className="text-sm text-gray-300">ROOM ID</label>
             <input
-              type="text"
               value={roomId}
               onChange={(e) => setRoomId(e.target.value)}
-              className="w-full p-3 border border-gray-700 bg-gray-900 text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="ROOM ID"
               onKeyUp={handleInputEnter}
+              placeholder="Paste or generate room id"
+              className="w-full p-3 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-          </div>
-          <div className="mb-4">
+
+            <label className="text-sm text-gray-300">USERNAME</label>
             <input
-              type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full p-3 border border-gray-700 bg-gray-900 text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="USERNAME"
               onKeyUp={handleInputEnter}
+              placeholder="Your display name"
+              className="w-full p-3 rounded-lg bg-gray-900 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={joinRoom}
+                className="flex-1 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold"
+              >
+                Join
+              </button>
+              <button
+                onClick={generateRoomId}
+                className="px-4 py-3 bg-transparent border border-gray-700 rounded-lg text-gray-200 hover:bg-gray-800"
+              >
+                New Room
+              </button>
+            </div>
+
+            <p className="text-xs text-gray-400 mt-3">
+              Tip: Share the Room ID with collaborators to join together.
+            </p>
           </div>
-          <button
-            onClick={joinRoom}
-            className="w-full py-3 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-300"
-          >
-            JOIN
-          </button>
-          <p className="mt-4 text-gray-400">
-            Don't have a room ID? Click{" "}
-            <span
-              onClick={generateRoomId}
-              className="text-blue-400 font-semibold cursor-pointer"
-            >
-              New Room
-            </span>
-          </p>
+        </div>
+
+        {/* Right card - FAQ */}
+        <div className="w-full lg:w-1/2">
+          <AccordianBar />
         </div>
       </div>
-
-      <AccordianBar className="w-full max-w-md" />
     </div>
   );
 }

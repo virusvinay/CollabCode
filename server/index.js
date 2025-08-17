@@ -43,11 +43,12 @@ const io = new Server(server, {
   path: "/socket.io",
   pingTimeout: 60000,
   cors: {
-    origin: true, // reflect request origin (works with Vercel previews & custom domains)
+    origin: true,         
     methods: ["GET", "POST"],
-    credentials: false,
+    credentials: false,   
   },
 });
+
 
 
 

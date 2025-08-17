@@ -1,7 +1,4 @@
-
-
 import React, { useState, useRef, useEffect } from "react";
-import { MdMessage } from "react-icons/md";
 import { Button } from "./../components/ui/button";
 import { Input } from "./../components/ui/input";
 import { ScrollArea } from "./ui/scroll-area";
@@ -9,26 +6,24 @@ import { useLocation } from "react-router-dom";
 import { ImCross } from "react-icons/im";
 
 export default function MessagingApp({ roomId, socketRef }) {
-  const [modal, setModal] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [hasNewMessage, setHasNewMessage] = useState(false);
+
   const messageEndRef = useRef(null);
   const Location = useLocation();
-  const username = Location?.state?.username || "DefaultUser"; // Set default username
+  const username = Location?.state?.username || "DefaultUser";
   const inputRef = useRef(null);
-  const modalHandler = () => {
-    setModal(!modal);
-    // Reset the notification when modal is opened
-    if (modal) {
+
+  const toggleChat = () => {
+    setIsOpen(!isOpen);
+    if (isOpen) {
       setHasNewMessage(false);
     }
   };
 
-
-
   useEffect(() => {
-    // Focus the input field when the component mounts
     if (inputRef.current) {
       inputRef.current.focus();
     }
@@ -38,14 +33,13 @@ export default function MessagingApp({ roomId, socketRef }) {
     if (socketRef.current) {
       socketRef.current.on("receiveMessage", (message) => {
         setMessages((prevMessages) => [...prevMessages, message.message]);
-        // Set notification flag
-        if (!modal) {
+        if (!isOpen) {
           setHasNewMessage(true);
         }
       });
 
       socketRef.current.on("newMessageNotification", () => {
-        if (!modal) {
+        if (!isOpen) {
           setHasNewMessage(true);
         }
       });
@@ -55,14 +49,12 @@ export default function MessagingApp({ roomId, socketRef }) {
         socketRef.current.off("newMessageNotification");
       };
     }
-  }, [socketRef.current, modal]);
+  }, [socketRef.current, isOpen]);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (inputValue.trim()) {
-      // Prepend username to the message
       const messageToSend = `${username} : : ${inputValue}`;
-      
       socketRef.current.emit("sendMessage", { roomId, message: messageToSend });
       setMessages([...messages, messageToSend]);
       setInputValue("");
@@ -74,58 +66,78 @@ export default function MessagingApp({ roomId, socketRef }) {
   }, [messages]);
 
   return (
-    <div >
-      <div
-        className={`cursor-pointer text-white text-2xl p-3 rounded-full border border-blue-700 bg-blue-700 hover:bg-blue-800 transition-all duration-300 relative ${hasNewMessage ? 'ring-2 ring-blue-300' : ''}`}
-        onClick={modalHandler}
-      >
-        <MdMessage className="text-white" />
-        {hasNewMessage && (
-          <div className="absolute top-0 right-0 bg-red-500 text-white text-xs px-1 py-0.5 rounded-full animate-pulse-new">
-            New
-          </div>
-        )}
+    <div>
+      {/* Chat Toggle Button */}
+      <div className="flex flex-col items-center gap-2 mt-4">
+        <Button
+          onClick={toggleChat}
+          className={`bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-5 py-2 rounded-full shadow-md hover:scale-105 transition ${
+            hasNewMessage ? "ring-4 ring-blue-300" : ""
+          }`}
+        >
+          {isOpen ? <ImCross /> : "💬 Chat"}
+        </Button>
       </div>
-      {modal && (
-        <div className="fixed inset-0  flex items-center bg-red-500  bg-opacity-10 backdrop-blur-none  z-50">
-          <div className="relative flex flex-col h-screen p-4 bg-blue-700 border border-gray-300 rounded-lg">
-            {/* Close Button */}
-            <div
-              className="absolute top-4 right-4 text-red-500 text-3xl cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-110"
-              onClick={modalHandler}
-            >
-              <ImCross />
-            </div>
 
-            {/* Scrollable Fixed Size Div for Messages */}
-            <ScrollArea className="flex-grow p-4 overflow-y-auto ">
-              <div className="space-y-2">
-                {messages.map((message, index) => (
-                  <div
-                    key={index}
-                    className="bg-white p-2 shadow-lg rounded-lg text-black  font-semibold  "
-                  >
-                    {message}
-                  </div>
-                ))}
-                <div ref={messageEndRef} />
-              </div>
-            </ScrollArea>
-
-            {/* Input for Messaging */}
-            <form className="flex mt-4" onSubmit={handleSendMessage}>
-              <Input
-                   autoFocus
-                placeholder="Type your message here"
-                className="flex-grow mr-2 text-black"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-              />
-              <Button type="submit"  className=" bg-yellow-500 text-black font-semibold hover:text-white ">Send</Button>
-            </form>
+      {/* Chat Window */}
+      <div
+        className={`fixed bottom-4 right-4 h-[65%] w-80 bg-gray-100 shadow-2xl border border-gray-200 rounded-2xl flex flex-col transform transition-all duration-300 z-50 ${
+          isOpen ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+        }`}
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center p-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-t-2xl shadow-md">
+          <h2 className="text-sm font-semibold">💬 Live Chat</h2>
+          <div
+            className="cursor-pointer hover:scale-110 transition"
+            onClick={toggleChat}
+          >
+            <ImCross size={14} />
           </div>
         </div>
-      )}
+
+        {/* Messages */}
+        <ScrollArea className="flex-grow p-3 bg-gray-50 rounded-b-2xl">
+          <div className="space-y-2">
+            {messages.map((message, index) => {
+              const isOwn = message.startsWith(username);
+              return (
+                <div
+                  key={index}
+                  className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm shadow-sm ${
+                    isOwn
+                      ? "ml-auto bg-gradient-to-r from-blue-400 to-indigo-400 text-white rounded-br-none"
+                      : "mr-auto bg-white text-gray-800 rounded-bl-none border border-gray-200"
+                  }`}
+                >
+                  {message}
+                </div>
+              );
+            })}
+            <div ref={messageEndRef} />
+          </div>
+        </ScrollArea>
+
+        {/* Input */}
+        <form
+          className="flex p-3 border-t border-gray-200 bg-white rounded-b-2xl"
+          onSubmit={handleSendMessage}
+        >
+          <Input
+            autoFocus
+            placeholder="Type a message..."
+            className="flex-grow mr-2 text-gray-700 text-sm border rounded-full px-3 py-2 focus:ring-2 focus:ring-blue-400"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+          />
+          <Button
+            type="submit"
+            className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-medium px-4 py-2 rounded-full text-sm hover:scale-105 transition"
+          >
+            Send
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }

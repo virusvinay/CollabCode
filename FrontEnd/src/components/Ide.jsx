@@ -1,7 +1,5 @@
-
-
 import React, { useEffect, useRef, useState } from "react";
-import { Box, HStack } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { Editor } from "@monaco-editor/react";
 import LanguageSelector from "./LanguageSelector";
 import { CODE_SNIPPETS } from "../constants";
@@ -14,26 +12,20 @@ export default function Ide({ socketRef, roomId, onCodeChange }) {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [value, setValue] = useState("");
   const [language, setLanguage] = useState("javascript");
-  const isRemoteChange = useRef(false); // Flag to track remote changes
+  const isRemoteChange = useRef(false);
 
   useEffect(() => {
-    // Handler to update the state based on window size
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); // Adjust breakpoint as needed
+      setIsMobile(window.innerWidth < 768);
     };
-
-    window.addEventListener('resize', handleResize);
-    handleResize(); // Initial check
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const debouncedEmitCodeChange = useRef(
     debounce((code) => {
-      console.log("haan bhai deboune me hun");
       if (!isRemoteChange.current) {
-           console.log("haan bhai deboune ke v andar hun");
         socketRef.current.emit(ACTIONS.CODE_CHANGE, {
           roomId,
           code,
@@ -48,9 +40,7 @@ export default function Ide({ socketRef, roomId, onCodeChange }) {
 
     editor.onDidChangeModelContent(() => {
       const code = editor.getValue();
-             console.log("changes1" , code , value);
       if (code !== value && !isRemoteChange.current) {
-        console.log("changes2" , code , value);
         setValue(code);
         debouncedEmitCodeChange(code);
       }
@@ -69,15 +59,15 @@ export default function Ide({ socketRef, roomId, onCodeChange }) {
   useEffect(() => {
     if (socketRef.current) {
       const handleCodeChange = ({ code }) => {
-           console.log("Received Code:", code);
-          console.log("Current Editor Value:", editorRef.current.getValue());
-        if (editorRef.current && code !== editorRef.current.getValue() && code!==null) {
-          isRemoteChange.current = true; // Mark change as remote
+        if (
+          editorRef.current &&
+          code !== editorRef.current.getValue() &&
+          code !== null
+        ) {
+          isRemoteChange.current = true;
           editorRef.current.setValue(code);
-         // setValue(code);
-          isRemoteChange.current = false; // Reset the flag after change
+          isRemoteChange.current = false;
         }
-         console.log("Updated Editor Value:", editorRef.current.getValue());
       };
 
       const handleLanguageChange = ({ language }) => {
@@ -101,44 +91,53 @@ export default function Ide({ socketRef, roomId, onCodeChange }) {
   }, [socketRef.current]);
 
   return (
-    <div className="p-4 h-screen bg-gray-900 text-gray-100">
-      <Box className="p-3 border rounded bg-gray-800 max-sm:h-[1000px] flex flex-col lg:flex-row items-center ">
-        <div className="flex flex-col flex-grow lg:w-3/4 sm:w-full ">
-          <LanguageSelector language={language} onSelect={onSelect} value={value} setValue={setValue} />
+    <div className="h-screen w-full flex flex-col bg-gray-950 text-gray-100 p-4">
+      {/* Top bar */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
+          CollabCode IDE
+        </h2>
+        <LanguageSelector
+          language={language}
+          onSelect={onSelect}
+          value={value}
+          setValue={setValue}
+        />
+      </div>
+
+      {/* Main container */}
+      <Box className="flex flex-col lg:flex-row gap-4 flex-grow overflow-hidden">
+        {/* Editor Section */}
+        <div className="flex-1 bg-gray-900 rounded-xl shadow-lg border border-gray-700 overflow-hidden">
           <Editor
             options={{
               minimap: { enabled: false },
               smoothScrolling: true,
               scrollBeyondLastLine: false,
+              fontSize: 14,
+              lineNumbers: "on",
             }}
-            height="75vh"
-            width={isMobile ? "100vw" : "45vw"}
+            height="100%"
+            width="100%"
             theme="vs-dark"
             language={language}
             defaultValue={CODE_SNIPPETS[language]}
             onMount={onMount}
             value={value}
             onChange={(value) => setValue(value)}
-            className="border rounded p-2"
           />
         </div>
-        <Output
-          editorRef={editorRef}
-          language={language}
-          socketRef={socketRef}
-          roomId={roomId}
-          className="rounded p-3 w-full lg:w-1/3 mt-4 lg:mt-0"
-        />
+
+        {/* Output Section */}
+        <div className="lg:w-1/3 w-full bg-gray-900 rounded-xl shadow-lg border border-gray-700 p-3">
+          <Output
+            editorRef={editorRef}
+            language={language}
+            socketRef={socketRef}
+            roomId={roomId}
+          />
+        </div>
       </Box>
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
