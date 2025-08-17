@@ -43,7 +43,11 @@ const io = new Server(server, {
   path: "/socket.io",
   pingTimeout: 60000,
   cors: {
+<<<<<<< HEAD
     origin: true,         
+=======
+    origin: true,    
+>>>>>>> e940057a09b498fa503567a9f2978bf1e926f160
     methods: ["GET", "POST"],
     credentials: false,   
   },
