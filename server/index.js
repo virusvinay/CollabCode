@@ -39,14 +39,15 @@ const path = require('path');
 // });
 
 const io = new Server(server, {
- pingTimeout : 60000,
+  path: "/socket.io",
+  pingTimeout: 60000,
   cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-    credentials: true,
+    origin: true, // reflect request origin (works with Vercel previews & custom domains)
+    methods: ["GET", "POST"],
+    credentials: false,
   },
-  // Allow older versions of Socket.IO clients to connect
 });
+
 
 
 app.use(cors());
