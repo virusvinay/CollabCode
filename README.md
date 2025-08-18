@@ -2,7 +2,7 @@
   <h1 style="text-align: center; color: #333;">CollabCode</h1>
   
   <p style="color: #555; font-size: 18px;">
-    <strong>CodeCollabify</strong> is a real-time collaborative coding platform designed to enhance team-based coding experiences. With a powerful Monaco code editor, live output display, and an integrated chat system, it provides a seamless environment for coding and communication. The platform is built using the MERN stack and styled with Tailwind CSS, ensuring a modern and responsive design.
+    <strong>CollabCode</strong> is a real-time collaborative coding platform designed to enhance team-based coding experiences. With a powerful Monaco code editor, live output display, and an integrated chat system, it provides a seamless environment for coding and communication. The platform is built using the MERN stack and styled with Tailwind CSS, ensuring a modern and responsive design.
   </p>
 
   <h2 style="color: #2c3e50; border-bottom: 2px solid #ddd; padding-bottom: 10px;">Features</h2>
